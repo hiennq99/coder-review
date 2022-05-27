@@ -1,0 +1,53 @@
+version: '3.7'
+services:
+  note-api:
+    container_name: note-api
+    build:
+      context: ./note-api/
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      - ./note-api:/usr/src/app
+      - /usr/src/app/node_modules
+    env_file:
+      - ./note-api/.env
+    ports:
+      - 3003:3000
+    command: sh -c "yarn start:dev"
+    networks:
+      - service_net
+  # note-app:
+  #   container_name: note-app
+  #   build:
+  #     context: ./note-app/
+  #     dockerfile: Dockerfile
+  #     target: development
+  #   volumes:
+  #     - ./note-app:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   env_file:
+  #     - ./note-app/.env
+  #   ports:
+  #     - 3000:3000
+  #   command: sh -c "yarn dev"
+  #   networks:
+  #     - service_net
+  postgres:
+    container_name: postgresv1
+    image: postgres:10.7
+    ports:
+      - 5432:5432
+    networks:
+      - service_net
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: postgres
+      PG_DATA: /var/lib/postgresql/data
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+networks:
+  service_net:
+    driver: bridge
+volumes:
+  pgdata:    
